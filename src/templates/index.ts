@@ -415,9 +415,308 @@ export const simpleImageTemplate: WorkflowTemplate = {
   ],
 };
 
+/**
+ * 图生视频模板
+ */
+export const imageToVideoTemplate: WorkflowTemplate = {
+  id: 'image-to-video',
+  name: '图生视频',
+  description: '把静态图片变成动态视频',
+  icon: '🎥',
+  
+  nodes: [
+    {
+      id: 'upload-1',
+      type: 'image-upload',
+      position: { x: 100, y: 200 },
+      data: { imageUrl: '', fileName: '' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '图像', type: 'image', direction: 'output' }],
+    },
+    {
+      id: 'text-1',
+      type: 'text-input',
+      position: { x: 100, y: 350 },
+      data: { text: '缓慢推进镜头，微风吹动' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '文本', type: 'text', direction: 'output' }],
+    },
+    {
+      id: 'video-1',
+      type: 'video-gen',
+      position: { x: 400, y: 250 },
+      data: { duration: 5, motion: 'auto' },
+      inputs: [
+        { id: 'input-0', name: '图像', type: 'image', direction: 'input' },
+        { id: 'input-1', name: '提示词', type: 'text', direction: 'input' },
+        { id: 'input-2', name: '参考图像', type: 'image', direction: 'input', isReferenceInput: true },
+      ],
+      outputs: [{ id: 'output-0', name: '视频', type: 'video', direction: 'output' }],
+    },
+    {
+      id: 'output-1',
+      type: 'video-output',
+      position: { x: 700, y: 250 },
+      data: { format: 'mp4', quality: 'high' },
+      inputs: [{ id: 'input-0', name: '视频', type: 'video', direction: 'input' }],
+      outputs: [],
+    },
+  ],
+  
+  connections: [
+    { id: 'c1', sourceNodeId: 'upload-1', sourcePortId: 'output-0', targetNodeId: 'video-1', targetPortId: 'input-0' },
+    { id: 'c2', sourceNodeId: 'text-1', sourcePortId: 'output-0', targetNodeId: 'video-1', targetPortId: 'input-1' },
+    { id: 'c3', sourceNodeId: 'video-1', sourcePortId: 'output-0', targetNodeId: 'output-1', targetPortId: 'input-0' },
+  ],
+};
+
+/**
+ * 提示词增强模板
+ */
+export const promptEnhancerTemplate: WorkflowTemplate = {
+  id: 'prompt-enhancer',
+  name: '提示词增强',
+  description: '用 LLM 把简单描述变成专业提示词',
+  icon: '✨',
+  
+  nodes: [
+    {
+      id: 'input-1',
+      type: 'text-input',
+      position: { x: 100, y: 200 },
+      data: { text: '一只猫坐在窗台上' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '文本', type: 'text', direction: 'output' }],
+    },
+    {
+      id: 'enhancer-1',
+      type: 'prompt-enhancer',
+      position: { x: 350, y: 200 },
+      data: { style: 'cinematic', detail: 'high' },
+      inputs: [{ id: 'input-0', name: '基础提示词', type: 'text', direction: 'input' }],
+      outputs: [{ id: 'output-0', name: '增强提示词', type: 'text', direction: 'output' }],
+    },
+    {
+      id: 'gen-1',
+      type: 'advanced-image-gen',
+      position: { x: 600, y: 200 },
+      data: { aspectRatio: '16:9', style: 'cinematic' },
+      inputs: [
+        { id: 'input-0', name: '提示词', type: 'text', direction: 'input' },
+        { id: 'input-1', name: '参考图像', type: 'image', direction: 'input', isReferenceInput: true },
+      ],
+      outputs: [{ id: 'output-0', name: '图像', type: 'image', direction: 'output' }],
+    },
+    {
+      id: 'output-1',
+      type: 'image-output',
+      position: { x: 900, y: 200 },
+      data: { format: 'png', quality: 90 },
+      inputs: [{ id: 'input-0', name: '图像', type: 'image', direction: 'input' }],
+      outputs: [],
+    },
+  ],
+  
+  connections: [
+    { id: 'c1', sourceNodeId: 'input-1', sourcePortId: 'output-0', targetNodeId: 'enhancer-1', targetPortId: 'input-0' },
+    { id: 'c2', sourceNodeId: 'enhancer-1', sourcePortId: 'output-0', targetNodeId: 'gen-1', targetPortId: 'input-0' },
+    { id: 'c3', sourceNodeId: 'gen-1', sourcePortId: 'output-0', targetNodeId: 'output-1', targetPortId: 'input-0' },
+  ],
+};
+
+/**
+ * 风格迁移模板
+ */
+export const styleTransferTemplate: WorkflowTemplate = {
+  id: 'style-transfer',
+  name: '风格迁移',
+  description: '把一张图的风格应用到另一张图',
+  icon: '🎨',
+  
+  nodes: [
+    {
+      id: 'content-1',
+      type: 'image-upload',
+      position: { x: 100, y: 150 },
+      data: { imageUrl: '', fileName: '' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '图像', type: 'image', direction: 'output' }],
+    },
+    {
+      id: 'style-1',
+      type: 'image-upload',
+      position: { x: 100, y: 320 },
+      data: { imageUrl: '', fileName: '' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '图像', type: 'image', direction: 'output' }],
+    },
+    {
+      id: 'transfer-1',
+      type: 'style-transfer',
+      position: { x: 400, y: 220 },
+      data: { strength: 0.8 },
+      inputs: [
+        { id: 'input-0', name: '内容图像', type: 'image', direction: 'input' },
+        { id: 'input-1', name: '风格参考', type: 'image', direction: 'input' },
+      ],
+      outputs: [{ id: 'output-0', name: '风格化图像', type: 'image', direction: 'output' }],
+    },
+    {
+      id: 'output-1',
+      type: 'image-output',
+      position: { x: 700, y: 220 },
+      data: { format: 'png', quality: 90 },
+      inputs: [{ id: 'input-0', name: '图像', type: 'image', direction: 'input' }],
+      outputs: [],
+    },
+  ],
+  
+  connections: [
+    { id: 'c1', sourceNodeId: 'content-1', sourcePortId: 'output-0', targetNodeId: 'transfer-1', targetPortId: 'input-0' },
+    { id: 'c2', sourceNodeId: 'style-1', sourcePortId: 'output-0', targetNodeId: 'transfer-1', targetPortId: 'input-1' },
+    { id: 'c3', sourceNodeId: 'transfer-1', sourcePortId: 'output-0', targetNodeId: 'output-1', targetPortId: 'input-0' },
+  ],
+};
+
+/**
+ * 批量图像变体模板
+ */
+export const imageVariationsTemplate: WorkflowTemplate = {
+  id: 'image-variations',
+  name: '图像变体',
+  description: '从一张图生成多个变体',
+  icon: '🔄',
+  
+  nodes: [
+    {
+      id: 'upload-1',
+      type: 'image-upload',
+      position: { x: 100, y: 250 },
+      data: { imageUrl: '', fileName: '' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '图像', type: 'image', direction: 'output' }],
+    },
+    {
+      id: 'variations-1',
+      type: 'image-variations',
+      position: { x: 400, y: 200 },
+      data: { variationStrength: 0.5 },
+      inputs: [
+        { id: 'input-0', name: '源图像', type: 'image', direction: 'input' },
+        { id: 'input-1', name: '参考图像', type: 'image', direction: 'input', isReferenceInput: true },
+      ],
+      outputs: [
+        { id: 'output-0', name: '变体 1', type: 'image', direction: 'output' },
+        { id: 'output-1', name: '变体 2', type: 'image', direction: 'output' },
+        { id: 'output-2', name: '变体 3', type: 'image', direction: 'output' },
+      ],
+    },
+    {
+      id: 'output-1',
+      type: 'image-output',
+      position: { x: 700, y: 100 },
+      data: { format: 'png', quality: 90 },
+      inputs: [{ id: 'input-0', name: '图像', type: 'image', direction: 'input' }],
+      outputs: [],
+    },
+    {
+      id: 'output-2',
+      type: 'image-output',
+      position: { x: 700, y: 250 },
+      data: { format: 'png', quality: 90 },
+      inputs: [{ id: 'input-0', name: '图像', type: 'image', direction: 'input' }],
+      outputs: [],
+    },
+    {
+      id: 'output-3',
+      type: 'image-output',
+      position: { x: 700, y: 400 },
+      data: { format: 'png', quality: 90 },
+      inputs: [{ id: 'input-0', name: '图像', type: 'image', direction: 'input' }],
+      outputs: [],
+    },
+  ],
+  
+  connections: [
+    { id: 'c1', sourceNodeId: 'upload-1', sourcePortId: 'output-0', targetNodeId: 'variations-1', targetPortId: 'input-0' },
+    { id: 'c2', sourceNodeId: 'variations-1', sourcePortId: 'output-0', targetNodeId: 'output-1', targetPortId: 'input-0' },
+    { id: 'c3', sourceNodeId: 'variations-1', sourcePortId: 'output-1', targetNodeId: 'output-2', targetPortId: 'input-0' },
+    { id: 'c4', sourceNodeId: 'variations-1', sourcePortId: 'output-2', targetNodeId: 'output-3', targetPortId: 'input-0' },
+  ],
+};
+
+/**
+ * 首尾帧视频生成模板
+ */
+export const frameInterpolationTemplate: WorkflowTemplate = {
+  id: 'frame-interpolation',
+  name: '首尾帧插值',
+  description: '给定首尾两帧，自动生成中间过渡视频',
+  icon: '🎞️',
+  
+  nodes: [
+    {
+      id: 'start-frame',
+      type: 'image-upload',
+      position: { x: 100, y: 150 },
+      data: { imageUrl: '', fileName: '' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '图像', type: 'image', direction: 'output' }],
+    },
+    {
+      id: 'end-frame',
+      type: 'image-upload',
+      position: { x: 100, y: 320 },
+      data: { imageUrl: '', fileName: '' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '图像', type: 'image', direction: 'output' }],
+    },
+    {
+      id: 'text-1',
+      type: 'text-input',
+      position: { x: 100, y: 480 },
+      data: { text: '平滑过渡，自然运动' },
+      inputs: [],
+      outputs: [{ id: 'output-0', name: '文本', type: 'text', direction: 'output' }],
+    },
+    {
+      id: 'interpolation-1',
+      type: 'frame-interpolation',
+      position: { x: 400, y: 250 },
+      data: { duration: 4 },
+      inputs: [
+        { id: 'input-0', name: '起始帧', type: 'image', direction: 'input' },
+        { id: 'input-1', name: '结束帧', type: 'image', direction: 'input' },
+        { id: 'input-2', name: '提示词', type: 'text', direction: 'input' },
+      ],
+      outputs: [{ id: 'output-0', name: '视频', type: 'video', direction: 'output' }],
+    },
+    {
+      id: 'output-1',
+      type: 'video-output',
+      position: { x: 700, y: 250 },
+      data: { format: 'mp4', quality: 'high' },
+      inputs: [{ id: 'input-0', name: '视频', type: 'video', direction: 'input' }],
+      outputs: [],
+    },
+  ],
+  
+  connections: [
+    { id: 'c1', sourceNodeId: 'start-frame', sourcePortId: 'output-0', targetNodeId: 'interpolation-1', targetPortId: 'input-0' },
+    { id: 'c2', sourceNodeId: 'end-frame', sourcePortId: 'output-0', targetNodeId: 'interpolation-1', targetPortId: 'input-1' },
+    { id: 'c3', sourceNodeId: 'text-1', sourcePortId: 'output-0', targetNodeId: 'interpolation-1', targetPortId: 'input-2' },
+    { id: 'c4', sourceNodeId: 'interpolation-1', sourcePortId: 'output-0', targetNodeId: 'output-1', targetPortId: 'input-0' },
+  ],
+};
+
 // 所有模板
 export const workflowTemplates: WorkflowTemplate[] = [
+  simpleImageTemplate,
+  promptEnhancerTemplate,
+  imageToVideoTemplate,
+  frameInterpolationTemplate,
+  styleTransferTemplate,
+  imageVariationsTemplate,
   characterCreatorTemplate,
   sciFiUniverseTemplate,
-  simpleImageTemplate,
 ];

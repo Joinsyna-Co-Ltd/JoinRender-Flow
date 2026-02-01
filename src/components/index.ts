@@ -7,3 +7,4 @@ export { ZoomControls } from './ZoomControls';
 export { PropertiesPanel } from './PropertiesPanel';
 export { TemplatePanel } from './TemplatePanel';
 export { PluginPanel } from './PluginPanel';
+export { SettingsPanel } from './SettingsPanel';

@@ -6,6 +6,7 @@ import type { NodeDefinition, NodeCategory } from '../types';
 interface SidebarProps {
   onOpenTemplatePanel: () => void;
   onOpenPluginPanel: () => void;
+  onOpenSettingsPanel: () => void;
   width: number;
   onWidthChange: (width: number) => void;
 }
@@ -16,6 +17,7 @@ const defaultCategories: NodeCategory[] = ['input', 'llm', 'media', 'output'];
 export const Sidebar: React.FC<SidebarProps> = ({ 
   onOpenTemplatePanel, 
   onOpenPluginPanel,
+  onOpenSettingsPanel,
   width,
   onWidthChange,
 }) => {
@@ -239,6 +241,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button className="footer-btn plugin" onClick={onOpenPluginPanel}>
           <span>🧩</span>
           <span>插件</span>
+        </button>
+        <button className="footer-btn settings" onClick={onOpenSettingsPanel}>
+          <span>⚙️</span>
+          <span>设置</span>
         </button>
       </div>
 

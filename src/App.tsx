@@ -7,12 +7,15 @@ import {
   PropertiesPanel,
   TemplatePanel,
   PluginPanel,
+  SettingsPanel,
 } from './components';
 import { PluginManager, builtinPlugins } from './plugins';
+import { initAPIConfig } from './services/api';
 
 export const App: React.FC = () => {
   const [showTemplatePanel, setShowTemplatePanel] = useState(false);
   const [showPluginPanel, setShowPluginPanel] = useState(false);
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false);
   
   // 侧边栏宽度
   const [sidebarWidth, setSidebarWidth] = useState(260);
@@ -46,11 +49,17 @@ export const App: React.FC = () => {
     }
   }, []);
 
+  // 初始化 API 配置
+  useEffect(() => {
+    initAPIConfig();
+  }, []);
+
   return (
     <div className="app-container">
       <Sidebar 
         onOpenTemplatePanel={() => setShowTemplatePanel(true)} 
         onOpenPluginPanel={() => setShowPluginPanel(true)}
+        onOpenSettingsPanel={() => setShowSettingsPanel(true)}
         width={sidebarWidth}
         onWidthChange={setSidebarWidth}
       />
@@ -71,6 +80,10 @@ export const App: React.FC = () => {
       
       {showPluginPanel && (
         <PluginPanel onClose={() => setShowPluginPanel(false)} />
+      )}
+      
+      {showSettingsPanel && (
+        <SettingsPanel onClose={() => setShowSettingsPanel(false)} />
       )}
     </div>
   );
