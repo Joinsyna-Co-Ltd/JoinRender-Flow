@@ -7,17 +7,19 @@ interface SidebarProps {
   onOpenTemplatePanel: () => void;
   onOpenPluginPanel: () => void;
   onOpenSettingsPanel: () => void;
+  onOpenCustomNodeEditor: () => void;
   width: number;
   onWidthChange: (width: number) => void;
 }
 
 // 默认类别顺序
-const defaultCategories: NodeCategory[] = ['input', 'llm', 'media', 'output'];
+const defaultCategories: NodeCategory[] = ['input', 'llm', 'media', 'audio', '3d', 'custom', 'output'];
 
 export const Sidebar: React.FC<SidebarProps> = ({ 
   onOpenTemplatePanel, 
   onOpenPluginPanel,
   onOpenSettingsPanel,
+  onOpenCustomNodeEditor,
   width,
   onWidthChange,
 }) => {
@@ -241,6 +243,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <button className="footer-btn plugin" onClick={onOpenPluginPanel}>
           <span>🧩</span>
           <span>插件</span>
+        </button>
+        <button className="footer-btn custom" onClick={onOpenCustomNodeEditor}>
+          <span>🔧</span>
+          <span>自定义</span>
         </button>
         <button className="footer-btn settings" onClick={onOpenSettingsPanel}>
           <span>⚙️</span>

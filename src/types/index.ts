@@ -5,6 +5,8 @@ export type PortType =
   | 'image' 
   | 'video' 
   | 'text' 
+  | 'audio'
+  | 'model3d'
   | 'any'
   // ComfyUI 类型
   | 'latent'
@@ -50,6 +52,8 @@ export type NodeCategory =
   | 'input' 
   | 'llm' 
   | 'media' 
+  | 'audio'
+  | '3d'
   | 'output'
   // ComfyUI 类别
   | 'loaders'
@@ -143,6 +147,7 @@ export interface NodeExecutionState {
   progress?: number;
   result?: unknown;
   error?: string;
+  message?: string;
 }
 
 // 工作流模板

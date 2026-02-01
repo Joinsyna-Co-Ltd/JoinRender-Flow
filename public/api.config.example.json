@@ -1,0 +1,146 @@
+{
+  "_说明": "复制此文件为 api.config.json，填入你需要使用的服务的 API Key",
+  "_提示": "只需填写你要用的服务，其他留空即可",
+  
+  "===== 文本模型 (LLM) =====": "",
+  
+  "openai": {
+    "_说明": "OpenAI GPT 系列，也用于 DALL-E、Whisper、TTS",
+    "apiKey": "sk-xxxxxxxxxxxxxxxxxxxxxxxx",
+    "baseUrl": "https://api.openai.com/v1/chat/completions"
+  },
+  "anthropic": {
+    "_说明": "Claude 系列模型",
+    "apiKey": "sk-ant-xxxxxxxxxxxxxxxx"
+  },
+  "google": {
+    "_说明": "Google Gemini 系列",
+    "apiKey": "AIzaxxxxxxxxxxxxxxxx"
+  },
+  "deepseek": {
+    "_说明": "DeepSeek 深度求索",
+    "apiKey": "sk-xxxxxxxxxxxxxxxx"
+  },
+  "moonshot": {
+    "_说明": "Moonshot Kimi",
+    "apiKey": "sk-xxxxxxxxxxxxxxxx"
+  },
+  "zhipu": {
+    "_说明": "智谱 GLM 系列",
+    "apiKey": "xxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxx"
+  },
+  "qwen": {
+    "_说明": "阿里通义千问",
+    "apiKey": "sk-xxxxxxxxxxxxxxxx"
+  },
+  "minimax": {
+    "_说明": "MiniMax 海螺 AI（文本+语音）",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  
+  "===== 图像生成模型 =====": "",
+  
+  "stability": {
+    "_说明": "Stability AI (Stable Diffusion)",
+    "apiKey": "sk-xxxxxxxxxxxxxxxx"
+  },
+  "midjourney": {
+    "_说明": "Midjourney (需要第三方 API 代理)",
+    "apiKey": "xxxxxxxxxxxxxxxx",
+    "baseUrl": "https://your-mj-proxy.com/api"
+  },
+  "ideogram": {
+    "_说明": "Ideogram AI",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "leonardo": {
+    "_说明": "Leonardo AI",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  
+  "===== 视频生成模型 =====": "",
+  
+  "runway": {
+    "_说明": "Runway Gen-3/Gen-4",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "pika": {
+    "_说明": "Pika Labs",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "kling": {
+    "_说明": "可灵 AI (快手)",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "luma": {
+    "_说明": "Luma Dream Machine",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "minimax_video": {
+    "_说明": "MiniMax 海螺视频 (可与 minimax 共用 key)",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  
+  "===== 音频模型 =====": "",
+  
+  "elevenlabs": {
+    "_说明": "ElevenLabs 语音合成",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "fish_audio": {
+    "_说明": "Fish Audio 语音合成",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  
+  "===== 音乐生成模型 =====": "",
+  
+  "suno": {
+    "_说明": "Suno AI 音乐生成",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "udio": {
+    "_说明": "Udio 音乐生成",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  
+  "===== 3D 模型生成 =====": "",
+  
+  "meshy": {
+    "_说明": "Meshy AI - 文本/图像转 3D",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "tripo": {
+    "_说明": "Tripo AI - 图像转 3D",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "rodin": {
+    "_说明": "Rodin (Hyper3D) - 高质量 3D 生成",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "csm": {
+    "_说明": "CSM AI - 图像转 3D",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  "luma_genie": {
+    "_说明": "Luma Genie - 3D 生成",
+    "apiKey": "xxxxxxxxxxxxxxxx"
+  },
+  
+  "===== 通用平台 =====": "",
+  
+  "replicate": {
+    "_说明": "Replicate 平台 (支持各类开源模型，包括 TripoSR)",
+    "apiKey": "r8_xxxxxxxxxxxxxxxx"
+  },
+  
+  "===== 本地服务 =====": "",
+  
+  "ollama": {
+    "_说明": "本地 Ollama 服务",
+    "baseUrl": "http://localhost:11434/api/generate"
+  },
+  "comfyui": {
+    "_说明": "本地 ComfyUI 服务",
+    "baseUrl": "http://localhost:8188"
+  }
+}

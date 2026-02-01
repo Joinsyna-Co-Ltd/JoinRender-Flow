@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import type { NodeInstance, Port } from '../types';
+import type { NodeInstance, Port, NodeDefinition } from '../types';
 import { getNodeDefinition } from '../nodes/definitions';
 import { useWorkflowStore } from '../store';
 
@@ -14,6 +14,7 @@ export const Node: React.FC<NodeProps> = ({ node }) => {
   const {
     selectedNodeIds,
     executionStates,
+    nodeOutputs,
     selectNode,
     startDrag,
     updateDrag,
@@ -160,7 +161,7 @@ export const Node: React.FC<NodeProps> = ({ node }) => {
         )}
         
         {/* 节点内容 */}
-        {renderNodeContent(node, definition, handleDataChange)}
+        {renderNodeContent(node, definition, handleDataChange, nodeOutputs.get(node.id))}
         
         {/* 输出端口 */}
         {node.outputs.length > 0 && (
@@ -195,8 +196,9 @@ export const Node: React.FC<NodeProps> = ({ node }) => {
 
 function renderNodeContent(
   node: NodeInstance, 
-  definition: ReturnType<typeof getNodeDefinition>,
-  onChange: (key: string, value: unknown) => void
+  definition: NodeDefinition | undefined,
+  onChange: (key: string, value: unknown) => void,
+  outputs?: Record<string, unknown>
 ) {
   if (!definition) return null;
   
@@ -242,19 +244,108 @@ function renderNodeContent(
             rows={4}
             className="code-textarea"
           />
+          {outputs?.['输出文本'] && (
+            <div className="output-result">
+              <div className="field-label">输出结果</div>
+              <div className="result-text">{String(outputs['输出文本']).slice(0, 200)}...</div>
+            </div>
+          )}
         </div>
       );
     
     case 'image-upload':
+      return (
+        <div className="node-content">
+          {node.data.imageUrl ? (
+            <div className="preview-image-container">
+              <img src={node.data.imageUrl as string} alt="上传的图像" className="preview-image" />
+            </div>
+          ) : (
+            <div 
+              className="upload-area"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    onChange('imageUrl', ev.target?.result);
+                    onChange('fileName', file.name);
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+              onClick={() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      onChange('imageUrl', ev.target?.result);
+                      onChange('fileName', file.name);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                };
+                input.click();
+              }}
+            >
+              <span className="upload-icon">📁</span>
+              <span className="upload-text">点击或拖放图像到此处</span>
+            </div>
+          )}
+        </div>
+      );
+    
     case 'video-upload':
       return (
         <div className="node-content">
-          <div className="upload-area">
-            <span className="upload-icon">📁</span>
-            <span className="upload-text">
-              拖放{node.type === 'image-upload' ? '图像' : '视频'}到此处
-            </span>
-          </div>
+          {node.data.videoUrl ? (
+            <div className="preview-video-container">
+              <video src={node.data.videoUrl as string} controls className="preview-video" />
+            </div>
+          ) : (
+            <div 
+              className="upload-area"
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('video/')) {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => {
+                    onChange('videoUrl', ev.target?.result);
+                    onChange('fileName', file.name);
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+              onClick={() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'video/*';
+                input.onchange = (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      onChange('videoUrl', ev.target?.result);
+                      onChange('fileName', file.name);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                };
+                input.click();
+              }}
+            >
+              <span className="upload-icon">📁</span>
+              <span className="upload-text">点击或拖放视频到此处</span>
+            </div>
+          )}
         </div>
       );
     
@@ -283,11 +374,18 @@ function renderNodeContent(
               <option value="gray">灰色</option>
             </select>
           </div>
+          {outputs?.['参考图像'] && (
+            <div className="preview-image-container">
+              <img src={outputs['参考图像'] as string} alt="生成的参考图" className="preview-image" />
+            </div>
+          )}
         </div>
       );
     
     case 'image-gen':
     case 'advanced-image-gen':
+    case 'gen4-text-to-image':
+    case 'flash-image':
       return (
         <div className="node-content">
           <div className="field-group">
@@ -302,11 +400,19 @@ function renderNodeContent(
               <option value="21:9">21:9 电影</option>
             </select>
           </div>
+          {outputs?.['图像'] && (
+            <div className="preview-image-container">
+              <img src={outputs['图像'] as string} alt="生成的图像" className="preview-image" />
+            </div>
+          )}
         </div>
       );
     
     case 'video-gen':
     case 'frame-interpolation':
+    case 'gen4-image-to-video':
+    case 'gen45-image-to-video':
+    case 'gen45-text-to-video':
       return (
         <div className="node-content">
           <div className="field-group">
@@ -320,7 +426,7 @@ function renderNodeContent(
               <option value={10}>10 秒</option>
             </select>
           </div>
-          {node.type === 'video-gen' && (
+          {(node.type === 'video-gen' || node.type === 'gen4-image-to-video') && (
             <div className="field-group">
               <label>运动</label>
               <select
@@ -333,37 +439,142 @@ function renderNodeContent(
               </select>
             </div>
           )}
+          {outputs?.['视频'] && (
+            <div className="preview-video-container">
+              <video src={outputs['视频'] as string} controls className="preview-video" />
+            </div>
+          )}
         </div>
       );
     
-    case 'image-output':
+    case 'image-output': {
+      const imageResult = outputs?.result as string;
       return (
         <div className="node-content">
-          <div className="output-preview">
-            <span className="preview-placeholder">🖼️</span>
-            <span className="preview-text">输出预览</span>
+          {imageResult ? (
+            <div className="preview-image-container">
+              <img src={imageResult} alt="输出图像" className="preview-image" />
+              <button 
+                className="download-btn"
+                onClick={() => {
+                  const a = document.createElement('a');
+                  a.href = imageResult;
+                  a.download = `output-${Date.now()}.png`;
+                  a.click();
+                }}
+              >
+                下载
+              </button>
+            </div>
+          ) : (
+            <div className="output-preview">
+              <span className="preview-placeholder">🖼️</span>
+              <span className="preview-text">运行后显示输出</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    case 'video-output': {
+      const videoResult = outputs?.result as string;
+      return (
+        <div className="node-content">
+          {videoResult ? (
+            <div className="preview-video-container">
+              <video src={videoResult} controls className="preview-video" />
+              <button 
+                className="download-btn"
+                onClick={() => {
+                  const a = document.createElement('a');
+                  a.href = videoResult;
+                  a.download = `output-${Date.now()}.mp4`;
+                  a.click();
+                }}
+              >
+                下载
+              </button>
+            </div>
+          ) : (
+            <div className="output-preview">
+              <span className="preview-placeholder">🎬</span>
+              <span className="preview-text">运行后显示输出</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    case 'storyboard-output': {
+      const storyboardResult = outputs?.result as { shot1?: string; shot2?: string; shot3?: string };
+      return (
+        <div className="node-content">
+          {storyboardResult?.shot1 || storyboardResult?.shot2 || storyboardResult?.shot3 ? (
+            <div className="storyboard-preview with-images">
+              {storyboardResult.shot1 && <img src={storyboardResult.shot1} alt="镜头1" className="storyboard-image" />}
+              {storyboardResult.shot2 && <img src={storyboardResult.shot2} alt="镜头2" className="storyboard-image" />}
+              {storyboardResult.shot3 && <img src={storyboardResult.shot3} alt="镜头3" className="storyboard-image" />}
+            </div>
+          ) : (
+            <div className="storyboard-preview">
+              <div className="storyboard-frame">1</div>
+              <div className="storyboard-frame">2</div>
+              <div className="storyboard-frame">3</div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    case 'prompt-enhancer':
+      return (
+        <div className="node-content">
+          <div className="field-group">
+            <label>风格</label>
+            <select
+              value={(node.data.style as string) || 'cinematic'}
+              onChange={(e) => onChange('style', e.target.value)}
+            >
+              <option value="cinematic">电影级</option>
+              <option value="anime">动漫</option>
+              <option value="realistic">写实</option>
+              <option value="artistic">艺术</option>
+            </select>
           </div>
+          {outputs?.['增强提示词'] && (
+            <div className="output-result">
+              <div className="field-label">增强结果</div>
+              <div className="result-text">{String(outputs['增强提示词']).slice(0, 150)}...</div>
+            </div>
+          )}
         </div>
       );
     
-    case 'video-output':
+    case 'image-analyzer':
       return (
         <div className="node-content">
-          <div className="output-preview">
-            <span className="preview-placeholder">🎬</span>
-            <span className="preview-text">视频预览</span>
-          </div>
+          {outputs?.['描述'] && (
+            <div className="output-result">
+              <div className="field-label">分析结果</div>
+              <div className="result-text">{String(outputs['描述']).slice(0, 150)}...</div>
+            </div>
+          )}
         </div>
       );
     
-    case 'storyboard-output':
+    case 'json-splitter':
       return (
         <div className="node-content">
-          <div className="storyboard-preview">
-            <div className="storyboard-frame">1</div>
-            <div className="storyboard-frame">2</div>
-            <div className="storyboard-frame">3</div>
-          </div>
+          {(outputs?.['提示词 1'] || outputs?.['提示词 2'] || outputs?.['提示词 3']) && (
+            <div className="output-result">
+              <div className="field-label">分离结果</div>
+              <div className="result-text" style={{ fontSize: 10 }}>
+                {outputs['提示词 1'] && <div>1: {String(outputs['提示词 1']).slice(0, 50)}...</div>}
+                {outputs['提示词 2'] && <div>2: {String(outputs['提示词 2']).slice(0, 50)}...</div>}
+                {outputs['提示词 3'] && <div>3: {String(outputs['提示词 3']).slice(0, 50)}...</div>}
+              </div>
+            </div>
+          )}
         </div>
       );
     

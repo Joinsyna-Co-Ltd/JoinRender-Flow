@@ -22,6 +22,9 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# API config with keys (use api.config.example.json as template)
+public/api.config.json
+
 # Cache
 .cache/
 .eslintcache

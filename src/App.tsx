@@ -8,17 +8,21 @@ import {
   TemplatePanel,
   PluginPanel,
   SettingsPanel,
+  CustomNodeEditor,
 } from './components';
 import { PluginManager, builtinPlugins } from './plugins';
 import { initAPIConfig } from './services/api';
+import { initCustomNodes, getCustomNodeDefinitions } from './services/customNodes';
+import { setCustomNodeDefinitions } from './nodes/definitions';
 
 export const App: React.FC = () => {
   const [showTemplatePanel, setShowTemplatePanel] = useState(false);
   const [showPluginPanel, setShowPluginPanel] = useState(false);
   const [showSettingsPanel, setShowSettingsPanel] = useState(false);
+  const [showCustomNodeEditor, setShowCustomNodeEditor] = useState(false);
   
-  // 侧边栏宽度
-  const [sidebarWidth, setSidebarWidth] = useState(260);
+  // 侧边栏宽度（默认最大 400px）
+  const [sidebarWidth, setSidebarWidth] = useState(400);
   // 属性面板宽度
   const [propertiesWidth, setPropertiesWidth] = useState(260);
   // 工具栏位置（初始居中）
@@ -51,8 +55,19 @@ export const App: React.FC = () => {
 
   // 初始化 API 配置
   useEffect(() => {
-    initAPIConfig();
+    initAPIConfig().catch(console.error);
   }, []);
+
+  // 初始化自定义节点
+  useEffect(() => {
+    initCustomNodes();
+    setCustomNodeDefinitions(getCustomNodeDefinitions());
+  }, []);
+
+  // 刷新自定义节点
+  const handleCustomNodesChanged = () => {
+    setCustomNodeDefinitions(getCustomNodeDefinitions());
+  };
 
   return (
     <div className="app-container">
@@ -60,6 +75,7 @@ export const App: React.FC = () => {
         onOpenTemplatePanel={() => setShowTemplatePanel(true)} 
         onOpenPluginPanel={() => setShowPluginPanel(true)}
         onOpenSettingsPanel={() => setShowSettingsPanel(true)}
+        onOpenCustomNodeEditor={() => setShowCustomNodeEditor(true)}
         width={sidebarWidth}
         onWidthChange={setSidebarWidth}
       />
@@ -85,6 +101,12 @@ export const App: React.FC = () => {
       {showSettingsPanel && (
         <SettingsPanel onClose={() => setShowSettingsPanel(false)} />
       )}
+      
+      <CustomNodeEditor
+        isOpen={showCustomNodeEditor}
+        onClose={() => setShowCustomNodeEditor(false)}
+        onNodesChanged={handleCustomNodesChanged}
+      />
     </div>
   );
 };

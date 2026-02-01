@@ -11,6 +11,7 @@ import type {
   Port,
 } from '../types';
 import { getNodeDefinitions, getNodeDefinition } from '../nodes/definitions';
+import { executeWorkflow } from '../services/executor';
 
 interface WorkflowStore {
   // 节点和连接
@@ -29,6 +30,9 @@ interface WorkflowStore {
   // 执行状态
   executionStates: NodeExecutionState[];
   isRunning: boolean;
+  
+  // 节点输出数据
+  nodeOutputs: Map<string, Record<string, unknown>>;
   
   // 选中的节点
   selectedNodeIds: string[];
@@ -66,6 +70,7 @@ interface WorkflowStore {
   runAll: () => Promise<void>;
   setNodeExecutionState: (state: NodeExecutionState) => void;
   clearExecutionStates: () => void;
+  getNodeOutput: (nodeId: string) => Record<string, unknown> | undefined;
   
   // 工作流操作
   clearWorkflow: () => void;
@@ -111,6 +116,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   },
   executionStates: [],
   isRunning: false,
+  nodeOutputs: new Map(),
   selectedNodeIds: [],
 
   addNode: (type, position) => {
@@ -353,34 +359,43 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
     const { nodes, connections } = get();
     if (nodes.length === 0) return;
     
-    set({ isRunning: true });
+    set({ isRunning: true, nodeOutputs: new Map() });
     get().clearExecutionStates();
     
-    // 拓扑排序获取执行顺序
-    const executionOrder = getExecutionOrder(nodes, connections);
-    
-    for (const nodeId of executionOrder) {
-      get().setNodeExecutionState({
-        nodeId,
-        status: 'running',
-        progress: 0,
+    try {
+      const outputs = await executeWorkflow(nodes, connections, {
+        onProgress: (nodeId, progress, message) => {
+          get().setNodeExecutionState({
+            nodeId,
+            status: 'running',
+            progress,
+            message,
+          });
+        },
+        onNodeComplete: (nodeId, nodeOutputs) => {
+          get().setNodeExecutionState({
+            nodeId,
+            status: 'completed',
+            progress: 100,
+          });
+          // 更新节点输出
+          set(state => {
+            const newOutputs = new Map(state.nodeOutputs);
+            newOutputs.set(nodeId, nodeOutputs);
+            return { nodeOutputs: newOutputs };
+          });
+        },
+        onNodeError: (nodeId, error) => {
+          get().setNodeExecutionState({
+            nodeId,
+            status: 'error',
+            progress: 0,
+            error,
+          });
+        },
       });
-      
-      // 模拟执行进度
-      for (let i = 0; i <= 100; i += 10) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        get().setNodeExecutionState({
-          nodeId,
-          status: 'running',
-          progress: i,
-        });
-      }
-      
-      get().setNodeExecutionState({
-        nodeId,
-        status: 'completed',
-        progress: 100,
-      });
+    } catch (error) {
+      console.error('工作流执行失败:', error);
     }
     
     set({ isRunning: false });
@@ -398,6 +413,10 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   clearExecutionStates: () => {
     set({ executionStates: [] });
   },
+  
+  getNodeOutput: (nodeId) => {
+    return get().nodeOutputs.get(nodeId);
+  },
 
   clearWorkflow: () => {
     set({
@@ -412,50 +431,3 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
     set({ nodes, connections, selectedNodeIds: [], executionStates: [] });
   },
 }));
-
-// 拓扑排序获取执行顺序
-function getExecutionOrder(
-  nodes: { id: string }[],
-  connections: { sourceNodeId: string; targetNodeId: string }[]
-): string[] {
-  const inDegree = new Map<string, number>();
-  const adjacency = new Map<string, string[]>();
-  
-  nodes.forEach(node => {
-    inDegree.set(node.id, 0);
-    adjacency.set(node.id, []);
-  });
-  
-  connections.forEach(conn => {
-    const targets = adjacency.get(conn.sourceNodeId) || [];
-    targets.push(conn.targetNodeId);
-    adjacency.set(conn.sourceNodeId, targets);
-    
-    inDegree.set(conn.targetNodeId, (inDegree.get(conn.targetNodeId) || 0) + 1);
-  });
-  
-  const queue: string[] = [];
-  const result: string[] = [];
-  
-  inDegree.forEach((degree, nodeId) => {
-    if (degree === 0) {
-      queue.push(nodeId);
-    }
-  });
-  
-  while (queue.length > 0) {
-    const nodeId = queue.shift()!;
-    result.push(nodeId);
-    
-    const targets = adjacency.get(nodeId) || [];
-    targets.forEach(targetId => {
-      const newDegree = (inDegree.get(targetId) || 0) - 1;
-      inDegree.set(targetId, newDegree);
-      if (newDegree === 0) {
-        queue.push(targetId);
-      }
-    });
-  }
-  
-  return result;
-}

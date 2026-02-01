@@ -8,3 +8,4 @@ export { PropertiesPanel } from './PropertiesPanel';
 export { TemplatePanel } from './TemplatePanel';
 export { PluginPanel } from './PluginPanel';
 export { SettingsPanel } from './SettingsPanel';
+export { CustomNodeEditor } from './CustomNodeEditor';
