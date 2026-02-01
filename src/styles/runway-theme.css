@@ -1,0 +1,711 @@
+/* ============================================
+   Runway 风格主题
+   参考 Runway Workflows 的设计语言
+   ============================================ */
+
+/* 节点类型颜色 - Runway 风格 */
+:root {
+  /* 输入节点 - 蓝色系 */
+  --node-input: #3b82f6;
+  --node-input-bg: rgba(59, 130, 246, 0.08);
+  --node-input-border: rgba(59, 130, 246, 0.3);
+  
+  /* LLM 节点 - 绿色系 */
+  --node-llm: #10b981;
+  --node-llm-bg: rgba(16, 185, 129, 0.08);
+  --node-llm-border: rgba(16, 185, 129, 0.3);
+  
+  /* 媒体模型节点 - 紫色系 */
+  --node-media: #8b5cf6;
+  --node-media-bg: rgba(139, 92, 246, 0.08);
+  --node-media-border: rgba(139, 92, 246, 0.3);
+  
+  /* 输出节点 - 橙色系 */
+  --node-output: #f97316;
+  --node-output-bg: rgba(249, 115, 22, 0.08);
+  --node-output-border: rgba(249, 115, 22, 0.3);
+  
+  /* 连接线颜色 */
+  --wire-image: #ec4899;
+  --wire-video: #8b5cf6;
+  --wire-text: #10b981;
+  --wire-latent: #84cc16;
+  --wire-model: #06b6d4;
+  --wire-default: #64748b;
+}
+
+/* ============================================
+   Runway 风格节点
+   ============================================ */
+.node {
+  min-width: 220px;
+  max-width: 280px;
+  background: linear-gradient(180deg, #1a1a1f 0%, #141417 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  backdrop-filter: blur(10px);
+}
+
+.node:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+.node.selected {
+  border-color: var(--accent-primary);
+  box-shadow: 
+    0 0 0 2px rgba(59, 130, 246, 0.3),
+    0 8px 32px rgba(59, 130, 246, 0.2);
+}
+
+/* 节点类型样式 */
+.node[data-category="input"] {
+  border-color: var(--node-input-border);
+}
+
+.node[data-category="input"] .node-header {
+  background: var(--node-input-bg);
+  border-bottom-color: var(--node-input-border);
+}
+
+.node[data-category="input"] .node-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--node-input);
+  border-radius: 16px 0 0 0;
+}
+
+.node[data-category="llm"] {
+  border-color: var(--node-llm-border);
+}
+
+.node[data-category="llm"] .node-header {
+  background: var(--node-llm-bg);
+  border-bottom-color: var(--node-llm-border);
+}
+
+.node[data-category="llm"] .node-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--node-llm);
+  border-radius: 16px 0 0 0;
+}
+
+.node[data-category="media"] {
+  border-color: var(--node-media-border);
+}
+
+.node[data-category="media"] .node-header {
+  background: var(--node-media-bg);
+  border-bottom-color: var(--node-media-border);
+}
+
+.node[data-category="media"] .node-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--node-media);
+  border-radius: 16px 0 0 0;
+}
+
+.node[data-category="output"] {
+  border-color: var(--node-output-border);
+}
+
+.node[data-category="output"] .node-header {
+  background: var(--node-output-bg);
+  border-bottom-color: var(--node-output-border);
+}
+
+.node[data-category="output"] .node-header::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--node-output);
+  border-radius: 16px 0 0 0;
+}
+
+/* 节点头部 - Runway 风格 */
+.node-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+}
+
+.node-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.node-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.node-badge {
+  font-size: 9px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.node-badge.comfy {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+}
+
+/* 节点主体 */
+.node-body {
+  padding: 8px 0;
+}
+
+/* 端口样式 - Runway 风格 */
+.node-ports {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.port-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  position: relative;
+  transition: background 0.15s ease;
+}
+
+.port-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.port-row.input {
+  justify-content: flex-start;
+}
+
+.port-row.output {
+  justify-content: flex-end;
+}
+
+/* 端口圆点 */
+.port {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: #141417;
+  cursor: crosshair;
+  transition: all 0.15s ease;
+  position: absolute;
+  z-index: 10;
+}
+
+.port.input {
+  left: -6px;
+}
+
+.port.output {
+  right: -6px;
+}
+
+.port:hover {
+  transform: scale(1.3);
+  box-shadow: 0 0 12px currentColor;
+}
+
+.port.connected {
+  background: currentColor;
+}
+
+/* 端口类型颜色 */
+.port.image { 
+  border-color: var(--wire-image); 
+  color: var(--wire-image);
+}
+
+.port.video { 
+  border-color: var(--wire-video); 
+  color: var(--wire-video);
+}
+
+.port.text { 
+  border-color: var(--wire-text); 
+  color: var(--wire-text);
+}
+
+.port.latent { 
+  border-color: var(--wire-latent); 
+  color: var(--wire-latent);
+}
+
+.port.model { 
+  border-color: var(--wire-model); 
+  color: var(--wire-model);
+}
+
+.port.any { 
+  border-color: var(--wire-default); 
+  color: var(--wire-default);
+}
+
+/* Reference 端口特殊样式 */
+.port.reference {
+  border-color: #f59e0b;
+  color: #f59e0b;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+}
+
+.port-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ref-badge {
+  font-size: 10px;
+  color: #f59e0b;
+}
+
+/* 节点内容区域 */
+.node-content {
+  padding: 8px 14px 12px;
+}
+
+.node-content textarea,
+.node-content input[type="text"],
+.node-content input[type="number"],
+.node-content select {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+.node-content textarea:hover,
+.node-content input:hover,
+.node-content select:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.node-content textarea:focus,
+.node-content input:focus,
+.node-content select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.node-content textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.node-content textarea::placeholder,
+.node-content input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* 字段标签 */
+.field-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.field-group {
+  margin-bottom: 10px;
+}
+
+.field-group:last-child {
+  margin-bottom: 0;
+}
+
+.field-group label {
+  display: block;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+/* 滑块控件 */
+.slider-widget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider-widget input[type="range"] {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  border: none;
+  padding: 0;
+}
+
+.slider-widget input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slider-value {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  min-width: 40px;
+  text-align: right;
+  font-family: 'SF Mono', monospace;
+}
+
+/* 上传区域 */
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.upload-area:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.upload-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+.upload-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* 输出预览 */
+.output-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.preview-placeholder {
+  font-size: 32px;
+  margin-bottom: 8px;
+  opacity: 0.3;
+}
+
+.preview-text {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* 执行进度条 */
+.node-progress {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-cyan));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* ============================================
+   连接线 - Runway 风格
+   ============================================ */
+.connection-line {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.connection-line.image { stroke: var(--wire-image); }
+.connection-line.video { stroke: var(--wire-video); }
+.connection-line.text { stroke: var(--wire-text); }
+.connection-line.latent { stroke: var(--wire-latent); }
+.connection-line.model { stroke: var(--wire-model); }
+.connection-line.default { stroke: var(--wire-default); }
+
+/* 连接线动画 */
+.connection-line.active {
+  stroke-dasharray: 8 4;
+  animation: flowAnimation 0.5s linear infinite;
+}
+
+@keyframes flowAnimation {
+  from { stroke-dashoffset: 12; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* ============================================
+   画布背景 - Runway 风格
+   ============================================ */
+.canvas-background {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 0);
+  background-size: 32px 32px;
+}
+
+/* ============================================
+   工具栏 - Runway 风格
+   ============================================ */
+.toolbar {
+  background: linear-gradient(180deg, rgba(26, 26, 31, 0.95) 0%, rgba(20, 20, 23, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.toolbar-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.toolbar-btn.run-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+}
+
+.toolbar-btn.run-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.toolbar-btn.run-btn.running {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* ============================================
+   侧边栏 - Runway 风格
+   ============================================ */
+.sidebar {
+  background: linear-gradient(180deg, #141417 0%, #0f0f11 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.sidebar-header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.logo-gradient {
+  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 节点项 - Runway 风格 */
+.node-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: grab;
+  transition: all 0.15s ease;
+  margin-bottom: 2px;
+}
+
+.node-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.node-item:active {
+  cursor: grabbing;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.node-item-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.node-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.node-item-badge {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.node-item-badge.comfy {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+}
+
+.node-item-badge.ref {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+/* 类别标题 */
+.category-header {
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.category-header:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.category-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.category-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.category-desc {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.category-count {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ============================================
+   缩放控制 - Runway 风格
+   ============================================ */
+.zoom-controls {
+  background: linear-gradient(180deg, rgba(26, 26, 31, 0.95) 0%, rgba(20, 20, 23, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.zoom-btn {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.zoom-value {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}

@@ -118,6 +118,7 @@ export const Node: React.FC<NodeProps> = ({ node }) => {
     <div
       ref={nodeRef}
       className={`node ${isSelected ? 'selected' : ''} ${statusClass} ${definition.isCustom ? 'comfy-node' : ''}`}
+      data-category={definition.category}
       style={{
         left: node.position.x,
         top: node.position.y,

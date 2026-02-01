@@ -291,6 +291,91 @@ export const builtinNodeDefinitions: NodeDefinition[] = [
   },
 
   // ============================================
+  // Runway 风格节点 - Gen-4 系列
+  // ============================================
+  {
+    type: 'gen4-text-to-image',
+    name: 'Gen-4 文生图',
+    category: 'media',
+    color: '#8b5cf6',
+    icon: '✨',
+    inputs: [
+      { name: '提示词', type: 'text' },
+    ],
+    outputs: [{ name: '图像', type: 'image' }],
+    defaultData: { 
+      aspectRatio: '16:9',
+      style: 'cinematic',
+    },
+    description: 'Runway Gen-4 文本生成图像',
+  },
+  {
+    type: 'gen4-image-to-video',
+    name: 'Gen-4 图生视频',
+    category: 'media',
+    color: '#8b5cf6',
+    icon: '🎬',
+    inputs: [
+      { name: '图像', type: 'image' },
+      { name: '提示词', type: 'text' },
+    ],
+    outputs: [{ name: '视频', type: 'video' }],
+    defaultData: { 
+      duration: 5,
+      motion: 'auto',
+    },
+    description: 'Runway Gen-4 图像生成视频',
+  },
+  {
+    type: 'gen45-text-to-video',
+    name: 'Gen-4.5 文生视频',
+    category: 'media',
+    color: '#a855f7',
+    icon: '🚀',
+    inputs: [
+      { name: '提示词', type: 'text' },
+    ],
+    outputs: [{ name: '视频', type: 'video' }],
+    defaultData: { 
+      duration: 10,
+      resolution: '1080p',
+    },
+    description: 'Runway Gen-4.5 文本直接生成视频',
+  },
+  {
+    type: 'gen45-image-to-video',
+    name: 'Gen-4.5 图生视频',
+    category: 'media',
+    color: '#a855f7',
+    icon: '🎥',
+    inputs: [
+      { name: '首帧图像', type: 'image' },
+      { name: '提示词', type: 'text' },
+    ],
+    outputs: [{ name: '视频', type: 'video' }],
+    defaultData: { 
+      duration: 10,
+      cameraMotion: 'auto',
+    },
+    description: 'Runway Gen-4.5 图像生成视频，支持首帧控制',
+  },
+  {
+    type: 'flash-image',
+    name: 'Flash 快速生图',
+    category: 'media',
+    color: '#06b6d4',
+    icon: '⚡',
+    inputs: [
+      { name: '提示词', type: 'text' },
+    ],
+    outputs: [{ name: '图像', type: 'image' }],
+    defaultData: { 
+      aspectRatio: '1:1',
+    },
+    description: '快速图像生成，适合快速迭代',
+  },
+
+  // ============================================
   // 输出节点
   // ============================================
   {
